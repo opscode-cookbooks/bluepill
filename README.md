@@ -47,7 +47,7 @@ If the default directory locations in the attributes/default.rb aren't what you 
 
 Example pill template resource and .erb file:
 
-    template "/etc/bluepill/my_app" do
+    template "/etc/bluepill/my_app.pill" do
       source "my_app.pill.erb"
     end
 
