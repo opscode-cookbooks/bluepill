@@ -17,8 +17,13 @@
 # limitations under the License.
 #
 
-gem_package "i18n"
-gem_package "bluepill"
+gem_package "i18n" do
+  action :install
+end
+
+gem_package "bluepill" do
+  action :install
+end
 
 [
   node["bluepill"]["conf_dir"],
