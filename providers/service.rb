@@ -32,7 +32,7 @@ action :enable do
   end
 
   case node['platform']
-  when "centos", "redhat", "freebsd"
+  when "centos", "redhat", "freebsd", "amazon", "scientific", "fedora"
     template "#{node["bluepill"]["init_dir"]}/bluepill-#{new_resource.service_name}" do
       source "bluepill_init.erb"
       cookbook "bluepill"
