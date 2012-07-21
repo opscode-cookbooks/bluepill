@@ -31,3 +31,10 @@ gem_package "bluepill"
     group node["bluepill"]["group"]
   end
 end
+
+if node["bluepill"]["rvm_detected"]
+  execute "create_wrapper" do
+    command "rvm wrapper #{node["bluepill"]["gemset"]} bootup bluepill"
+    not_if "which bootup_bluepill"
+  end
+end
