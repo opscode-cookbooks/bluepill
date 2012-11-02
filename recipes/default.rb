@@ -31,3 +31,20 @@ gem_package "bluepill"
     group node["bluepill"]["group"]
   end
 end
+
+if File.exists?("/etc/rsyslog.conf")
+  # Ensure the rsyslog service is known to chef
+  service "rsyslog" do
+    supports :start => true, :stop => true, :restart => true
+    action :nothing
+  end
+
+  bluepill_log_line = "local6.*\t/var/log/bluepill.log"
+  execute "setup rsyslog with bluepill" do
+    command <<-SH
+      echo "#{bluepill_log_line}" >> /etc/rsyslog.conf
+    SH
+    not_if "grep '#{bluepill_log_line}' /etc/rsyslog.conf"
+    notifies :restart, "service[rsyslog]"
+  end
+end
