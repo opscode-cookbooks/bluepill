@@ -1,4 +1,4 @@
-require_relative "./helpers"
+require_relative "./support/helpers"
 
 describe_recipe 'bluepill_test::default' do
   include BluepillTestHelpers
