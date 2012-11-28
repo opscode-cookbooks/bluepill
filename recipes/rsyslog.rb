@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: bluepill
-# Recipe:: default
+# Recipe:: rsyslog
 #
 # Copyright 2010, Opscode, Inc.
 #
@@ -17,21 +17,12 @@
 # limitations under the License.
 #
 
-gem_package "i18n"
-gem_package "bluepill" do
-  version node["bluepill"]["version"] if node["bluepill"]["version"]
-end
+include_recipe "rsyslog"
 
-[
-  node["bluepill"]["conf_dir"],
-  node["bluepill"]["pid_dir"],
-  node["bluepill"]["state_dir"]
-].each do |dir|
-  directory dir do
-    recursive true
-    owner "root"
-    group node["bluepill"]["group"]
-  end
+template "/etc/rsyslog.d/bluepill.conf" do
+  owner  "root"
+  group  "root"
+  mode   0644
+  source "bluepill_rsyslog.conf.erb"
+  notifies :restart, "service[rsyslog]"
 end
-
-include_recipe "bluepill::rsyslog" if node['bluepill']['use_rsyslog']
