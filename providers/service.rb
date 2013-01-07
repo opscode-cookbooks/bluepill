@@ -95,6 +95,13 @@ action :restart do
   end
 end
 
+action :reload do
+  Chef::Log.debug "Reloading bluepill config for #{new_resource.service_name}"
+  shell_out!(load_command)
+  new_resource.updated_by_last_action(true)
+  Chef::Log.debug "Reloaded bluepill config for#{new_resource.service_name}"
+end
+
 def load_current_resource
   @current_resource = Chef::Resource::BluepillService.new(new_resource.name)
   @current_resource.service_name(new_resource.service_name)
