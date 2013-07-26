@@ -36,23 +36,24 @@ action :enable do
         to node['bluepill']['bin']
         only_if { ::File.exists?(config_file) }
       end
-      case node['platform_family']
-      when "rhel", "fedora", "freebsd"
-        template "#{node['bluepill']['init_dir']}/bluepill-#{new_resource.service_name}" do
-          source "bluepill_init.#{node['platform_family']}.erb"
-          cookbook "bluepill"
-          owner "root"
-          group node['bluepill']['group']
-          mode "0755"
-          variables(
-                    :service_name => new_resource.service_name,
-                    :config_file => config_file
-                    )
-        end
+      template_suffix = case node['platform_family']
+                        when "rhel", "fedora", "freebsd" then node['platform_family']
+                        else 'lsb'
+                        end
+      template "#{node['bluepill']['init_dir']}/bluepill-#{new_resource.service_name}" do
+        source "bluepill_init.#{template_suffix}.erb"
+        cookbook "bluepill"
+        owner "root"
+        group node['bluepill']['group']
+        mode "0755"
+        variables(
+                  :service_name => new_resource.service_name,
+                  :config_file => config_file
+                  )
+      end
 
-        service "bluepill-#{new_resource.service_name}" do
-          action [ :enable ]
-        end
+      service "bluepill-#{new_resource.service_name}" do
+        action [ :enable ]
       end
     end
   end
