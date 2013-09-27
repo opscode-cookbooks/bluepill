@@ -22,8 +22,7 @@ case "$1" in
     $BLUEPILL_BIN $SERVICE_NAME quit
     ;;
   restart)
-    $0 stop
-    $0 start
+    $BLUEPILL_BIN $SERVICE_NAME restart
     ;;
   status)
     $BLUEPILL_BIN $SERVICE_NAME status
