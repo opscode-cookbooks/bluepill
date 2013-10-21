@@ -38,8 +38,10 @@ action :enable do
       end
       template_suffix = case node['platform_family']
                         when "rhel", "fedora", "freebsd" then node['platform_family']
-                        else 'lsb'
+                        when 'debian' then 'lsb'
+                        else nil
                         end
+
       template "#{node['bluepill']['init_dir']}/bluepill-#{new_resource.service_name}" do
         source "bluepill_init.#{template_suffix}.erb"
         cookbook "bluepill"
@@ -50,7 +52,7 @@ action :enable do
                   :service_name => new_resource.service_name,
                   :config_file => config_file
                   )
-      end
+      end if template_suffix
 
       service "bluepill-#{new_resource.service_name}" do
         action [ :enable ]
