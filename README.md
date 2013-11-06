@@ -41,6 +41,15 @@ The load action should probably always be specified, to ensure that if bluepill 
 
 The recipe using the service must contain a template resource for the pill and it must be named `my_app.pill.erb`, where `my_app` is the service name passed to the bluepill service resource.
 
+You can also specify the location of the pill file in the resource.
+
+```ruby
+bluepill_servie 'my-app' do
+  action [:enable, :load, :start]
+  conf_dir '/home/someuser/somerelease'
+end
+```
+
 
 Usage
 -----
