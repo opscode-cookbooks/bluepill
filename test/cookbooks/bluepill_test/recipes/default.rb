@@ -18,3 +18,18 @@ template ::File.join(node['bluepill']['conf_dir'],
 bluepill_service node['bluepill_test']['service_name'] do
   action [:enable, :load, :start]
 end
+
+ruby_block "waiting for service to start" do
+  block do
+    command = Mixlib::ShellOut.new(
+      "#{node['bluepill']['bin']} #{node['bluepill_test']['service_name']} status")
+
+    result = command.run_command
+    unless result.stdout =~ /.*\(pid:\d+\):\sup/
+      raise "service not up"
+    end
+  end
+
+  retries 5
+  retry_delay 2
+end
