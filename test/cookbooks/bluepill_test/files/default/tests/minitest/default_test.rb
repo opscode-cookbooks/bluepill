@@ -32,23 +32,5 @@ describe_recipe 'bluepill_test::default' do
     it "the default log file must exist (COOK-1295)" do
       file(node['bluepill']['logfile']).must_exist
     end
-
-    describe "spawn a netcat tcp client repeatedly" do
-      let(:port) { node[test_config[:key]]['tcp_server_listen_port'] }
-      let(:secret) { node[test_config[:key]]['secret'] }
-      it "should receive a TCP connection from netcat" do
-        TCPServer.open("localhost", port) do |server|
-          client = server.accept
-          assert_instance_of TCPSocket, client
-
-          client_secret = client.gets.strip!
-          assert_equal secret, client_secret
-
-          client.close
-        end
-      end
-    end
-
   end
-
 end

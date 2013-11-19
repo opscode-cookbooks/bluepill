@@ -2,7 +2,7 @@
 Bluepill.application("<%= @name %>") do |app|
   app.process("netcat") do |process|
     process.pid_file = "/var/run/netcat.pid"
-    process.start_command = "sh -c 'echo <%= @secret %> | " +
-      "nc -v localhost <%= @port %>'; sleep"
+    process.start_command = "nc -lk 1234"
+    process.daemonize = true
   end
 end
