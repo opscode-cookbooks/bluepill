@@ -28,7 +28,7 @@ def whyrun_supported?
 end
 
 action :enable do
-  config_file = ::File.join(node['bluepill']['conf_dir'],
+  config_file = ::File.join(read_conf_dir,
                             "#{new_resource.service_name}.pill")
   unless @current_resource.enabled
     converge_by("enable #{ @new_resource }") do
@@ -45,9 +45,9 @@ action :enable do
           group node['bluepill']['group']
           mode "0755"
           variables(
-                    :service_name => new_resource.service_name,
-                    :config_file => config_file
-                    )
+            :service_name => new_resource.service_name,
+            :config_file => config_file
+          )
         end
 
         service "bluepill-#{new_resource.service_name}" do
@@ -84,7 +84,7 @@ end
 action :disable do
   if @current_resource.enabled
     converge_by("disable #{ @new_resource }") do
-      file "#{node['bluepill']['conf_dir']}/#{new_resource.service_name}.pill" do
+      file "#{read_conf_dir}/#{new_resource.service_name}.pill" do
         action :delete
       end
       link "#{node['bluepill']['init_dir']}/#{new_resource.service_name}" do
@@ -125,12 +125,16 @@ end
 
 protected
 
+def read_conf_dir
+  new_resource.conf_dir || node['bluepill']['conf_dir']
+end
+
 def status_command
   "#{node['bluepill']['bin']} #{new_resource.service_name} status"
 end
 
 def load_command
-  "#{node['bluepill']['bin']} load #{node['bluepill']['conf_dir']}/#{new_resource.service_name}.pill"
+  "#{node['bluepill']['bin']} load #{read_conf_dir}/#{new_resource.service_name}.pill"
 end
 
 def start_command
@@ -152,7 +156,7 @@ end
 
 def service_running?
   begin
-    if shell_out(status_command).exitstatus == 0
+    if shell_out(status_command).stdout =~ /.*\(pid:\d+\):\sup/
       @current_resource.running true
       Chef::Log.debug("#{new_resource} is running")
     end
@@ -163,7 +167,7 @@ def service_running?
 end
 
 def service_enabled?
-  if ::File.exists?("#{node['bluepill']['conf_dir']}/#{new_resource.service_name}.pill") &&
+  if ::File.exists?("#{read_conf_dir}/#{new_resource.service_name}.pill") &&
       ::File.symlink?("#{node['bluepill']['init_dir']}/#{new_resource.service_name}")
     @current_resource.enabled true
   else
