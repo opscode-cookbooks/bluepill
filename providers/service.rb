@@ -155,7 +155,7 @@ end
 
 def service_running?
   begin
-    if shell_out(status_command).exitstatus == 0
+    if shell_out(status_command).stdout =~ /.*\(pid:\d+\):\sup/
       @current_resource.running true
       Chef::Log.debug("#{new_resource} is running")
     end
