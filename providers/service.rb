@@ -128,7 +128,7 @@ end
 protected
 
 def status_command
-  "#{node['bluepill']['bin']} #{new_resource.service_name} status"
+  "#{node['bluepill']['bin']} status #{new_resource.service_name}"
 end
 
 def load_command
