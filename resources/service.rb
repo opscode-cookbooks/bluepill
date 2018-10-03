@@ -20,8 +20,6 @@
 property :service_name, name_property: true
 property :variables, Hash
 
-require 'chef/mixin/language'
-
 action :start do
   unless service_running?
     converge_by("start #{new_resource.service_name}") do
